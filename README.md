@@ -1,4 +1,4 @@
-% asq
+
 ```bash
 asq [-v] IP-ADDRESS
 ```
