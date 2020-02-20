@@ -1,7 +1,40 @@
-///
-/// Admin command line tool for Crush servers
-///
-///
+//!
+//! ```
+//! asq [-v] IP-ADDRESS
+//! ```
+//!
+//! Command line command to tell AS of an IP address.
+//! AS, Autonomous System is the top level of the IP
+//! routing in the Internet.
+//! AS usually means the international operator of the IP address.
+//!
+//! # Example
+//! (at command shell)
+//! ```bash
+//! $ host -4 -t A ibm.com
+//! ibm.com has address 129.42.38.10
+//! $ asq 129.42.38.10
+//! IBM-EI
+//! $ asq -v 129.42.38.10
+//! IBM-EI - IBM - Events Infrastructure - US
+//! IBMCCH-RTP - IBM - US
+//! ISSC-AS - IBM Corporation - US
+//! $ host -4 -t A www.ibm.com
+//! ...
+//! ... has address 59.151.164.181
+//! $ asq 59.151.164.181
+//! AKAMAI-AS
+//! $ asq -v 59.151.164.181
+//! AKAMAI-AS - Akamai Technologies, Inc. - US
+//! AKAMAI-TYO-AP - Akamai Technologies Tokyo ASN - SG
+//!```
+//!
+//! # Installation
+//!
+//! ```cargo install --path .```
+//!
+//! installs the asq command to ~/.cargo/bin
+//!
 
 #[macro_use] extern crate clap;
 extern crate reqwest;
@@ -12,12 +45,6 @@ extern crate serde_json;
 use clap::{Arg, App};
 use serde::Deserialize;
 
-///
-/// asq
-/// Command line command to tell AS of and IP address
-/// AS, Autonomous System is the top level of the IP routing in the Internet
-/// AS usually means the international operator of the IP address
-///
 fn main() {
 
     let matches = App::new("asq")
@@ -31,7 +58,7 @@ fn main() {
                 .help("Show more information"),
         )
         .arg(
-              Arg::with_name("ip_address")
+            Arg::with_name("ip_address")
                 .index(1)
                 .required(true)
                 .help("IP address whose AS we want to know"),
@@ -95,7 +122,7 @@ struct AsAsn {
     country_code: String,
 }
 
-// connects to bgpview to fill AsResponse
+/// Connects to bgpview.io to fill AsResponse struct
 fn get_as(ip_address: String) -> Result<AsResponse, String> {
     let url = format!("https://api.bgpview.io/ip/{}", ip_address);
     let json_text = match GET(&url) {
@@ -109,10 +136,12 @@ fn get_as(ip_address: String) -> Result<AsResponse, String> {
     }
 }
 
+/// Make get request to URL
 // This is a separate function because I can not figure out
 // better way to return error. Both question marks must
 // return Reqwest::Result.
 #[allow(non_snake_case)]
+#[doc(hidden)]
 fn GET(url: &str) -> reqwest::Result<String> {
     Ok(reqwest::blocking::get(url)?.text()?)
 }
