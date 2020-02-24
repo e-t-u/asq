@@ -8,6 +8,8 @@ AS, Autonomous System is the top level of the IP
 routing in the Internet.
 AS usually means the international operator of the IP address.
 
+Program uses REST API of bgpview.io to retrieve the information.
+
 # Example
 
 (at command shell)
